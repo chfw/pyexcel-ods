@@ -3,8 +3,7 @@ import datetime  # noqa
 
 import pyexcel
 
-from nose.tools import eq_, raises  # noqa
-
+import pytest
 
 def create_sample_file1(file):
     data = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", 1.1, 1]
@@ -135,6 +134,6 @@ class ODSCellTypes:
         # Text
         assert self.data["Sheet1"][1][9] == "abc"
 
-        @raises(IndexError)
         def test_no_excessive_trailing_columns(self):
-            assert self.data["Sheet1"][2][6] == ""
+            with pytest.raises(IndexError):
+                assert self.data["Sheet1"][2][6] == ""

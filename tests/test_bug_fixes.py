@@ -8,7 +8,7 @@ from pyexcel_ods import get_data, save_data
 from pyexcel_io.exceptions import IntegerAccuracyLossError
 
 from nose import SkipTest
-from nose.tools import eq_, raises
+import pytest
 
 IN_TRAVIS = "TRAVIS" in os.environ
 
@@ -27,33 +27,32 @@ def test_bug_fix_for_issue_2():
     assert new_data["Sheet 2"] == [[u"row 1", u"H\xe9ll\xf4!", u"Hol\xc1!"]]
 
 
-@raises(Exception)
 def test_invalid_date():
-    from pyexcel_ods.ods import date_value
+    with pytest.raises(Exception):
+        from pyexcel_ods.ods import date_value
 
-    value = "2015-08-"
-    date_value(value)
-
-
-@raises(Exception)
-def test_fake_date_time_10():
-    from pyexcel_ods.ods import date_value
-
-    date_value("1234567890")
+        value = "2015-08-"
+        date_value(value)
 
 
-@raises(Exception)
+    with pytest.raises(Exception):
+        from pyexcel_ods.ods import date_value
+
+        date_value("1234567890")
+
+
 def test_fake_date_time_19():
-    from pyexcel_ods.ods import date_value
+    with pytest.raises(Exception):
+        from pyexcel_ods.ods import date_value
 
-    date_value("1234567890123456789")
+        date_value("1234567890123456789")
 
 
-@raises(Exception)
 def test_fake_date_time_20():
-    from pyexcel_ods.ods import date_value
+    with pytest.raises(Exception):
+        from pyexcel_ods.ods import date_value
 
-    date_value("12345678901234567890")
+        date_value("12345678901234567890")
 
 
 def test_issue_13():
@@ -152,12 +151,12 @@ def test_issue_30():
     os.unlink(test_file)
 
 
-@raises(IntegerAccuracyLossError)
 def test_issue_30_precision_loss():
-    test_file = "issue_30_2.ods"
-    sheet = pe.Sheet()
-    sheet[0, 0] = 9999999999999999
-    sheet.save_as(test_file)
+    with pytest.raises(IntegerAccuracyLossError):
+        test_file = "issue_30_2.ods"
+        sheet = pe.Sheet()
+        sheet[0, 0] = 9999999999999999
+        sheet.save_as(test_file)
 
 
 def get_fixtures(filename):
