@@ -7,7 +7,6 @@ import pyexcel as pe
 from pyexcel_ods import get_data, save_data
 from pyexcel_io.exceptions import IntegerAccuracyLossError
 
-from nose import SkipTest
 import pytest
 
 IN_TRAVIS = "TRAVIS" in os.environ
@@ -120,7 +119,7 @@ def test_pr_22():
 
 def test_issue_23():
     if not IN_TRAVIS:
-        raise SkipTest()
+        pytest.skip("Need to be in Travis CI to run this test.")
     pe.get_book(
         url=(
             "https://github.com/pyexcel/pyexcel-ods/"
