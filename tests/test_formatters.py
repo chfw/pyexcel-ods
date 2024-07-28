@@ -7,7 +7,7 @@ from nose.tools import eq_
 
 
 class TestAutoDetectInt:
-    def setUp(self):
+    def setup_method(self):
         self.content = [[1, 2, 3.1]]
         self.test_file = "test_auto_detect_init.ods"
         pe.save_as(array=self.content, dest_file_name=self.test_file)
@@ -64,5 +64,5 @@ class TestAutoDetectInt:
         ).strip()
         assert str(book) == expected
 
-    def tearDown(self):
+    def teardown_method(self):
         os.unlink(self.test_file)

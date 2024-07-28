@@ -19,17 +19,17 @@ class TestNativeODSWriter:
         content = get_data(self.testfile, library="pyexcel-ods")
         assert content == self.content
 
-    def tearDown(self):
+    def teardown_method(self):
         if os.path.exists(self.testfile):
             os.unlink(self.testfile)
 
 
 class TestodsnCSVWriter(PyexcelWriterBase):
-    def setUp(self):
+    def setup_method(self):
         self.testfile = "test.ods"
         self.testfile2 = "test.csv"
 
-    def tearDown(self):
+    def teardown_method(self):
         if os.path.exists(self.testfile):
             os.unlink(self.testfile)
         if os.path.exists(self.testfile2):
@@ -37,9 +37,9 @@ class TestodsnCSVWriter(PyexcelWriterBase):
 
 
 class TestodsHatWriter(PyexcelHatWriterBase):
-    def setUp(self):
+    def setup_method(self):
         self.testfile = "test.ods"
 
-    def tearDown(self):
+    def teardown_method(self):
         if os.path.exists(self.testfile):
             os.unlink(self.testfile)
