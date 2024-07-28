@@ -21,7 +21,7 @@ class TestAutoDetectInt:
         | 1 | 2 | 3.1 |
         +---+---+-----+"""
         ).strip()
-        eq_(str(sheet), expected)
+        assert str(sheet) == expected
 
     def test_get_book_auto_detect_int(self):
         book = pe.get_book(file_name=self.test_file, library="pyexcel-ods")
@@ -32,7 +32,7 @@ class TestAutoDetectInt:
         | 1 | 2 | 3.1 |
         +---+---+-----+"""
         ).strip()
-        eq_(str(book), expected)
+        assert str(book) == expected
 
     def test_auto_detect_int_false(self):
         sheet = pe.get_sheet(
@@ -47,7 +47,7 @@ class TestAutoDetectInt:
         | 1.0 | 2.0 | 3.1 |
         +-----+-----+-----+"""
         ).strip()
-        eq_(str(sheet), expected)
+        assert str(sheet) == expected
 
     def test_get_book_auto_detect_int_false(self):
         book = pe.get_book(
@@ -62,7 +62,7 @@ class TestAutoDetectInt:
         | 1.0 | 2.0 | 3.1 |
         +-----+-----+-----+"""
         ).strip()
-        eq_(str(book), expected)
+        assert str(book) == expected
 
     def tearDown(self):
         os.unlink(self.test_file)
