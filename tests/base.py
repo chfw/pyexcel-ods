@@ -1,9 +1,9 @@
 import os  # noqa
 import datetime  # noqa
 
+import pytest
 import pyexcel
 
-import pytest
 
 def create_sample_file1(file):
     data = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", 1.1, 1]
@@ -82,7 +82,7 @@ class PyexcelMultipleSheetBase:
         expected = [[4, 4, 4, 4], [5, 5, 5, 5], [6, 6, 6, 6]]
         assert data == expected
         data = list(b["Sheet3"].rows())
-        expected = [[u"X", u"Y", u"Z"], [1, 4, 7], [2, 5, 8], [3, 6, 9]]
+        expected = [["X", "Y", "Z"], [1, 4, 7], [2, 5, 8], [3, 6, 9]]
         assert data == expected
         sheet3 = b["Sheet3"]
         sheet3.name_columns_by_row(0)
@@ -105,9 +105,9 @@ class ODSCellTypes:
         assert self.data["Sheet1"][1][1].strftime(time_format) == "12:12:11"
         assert self.data["Sheet1"][2][1].strftime(time_format) == "12:00:00"
         assert self.data["Sheet1"][3][1] == 0
-        assert (
-            self.data["Sheet1"][4][1] ==
-            datetime.timedelta(hours=27, minutes=17, seconds=54))
+        assert self.data["Sheet1"][4][1] == datetime.timedelta(
+            hours=27, minutes=17, seconds=54
+        )
         assert self.data["Sheet1"][5][1] == "Other"
         # boolean
         assert self.data["Sheet1"][0][2] == "Boolean"

@@ -3,11 +3,10 @@
 import os
 
 import psutil
+import pytest
 import pyexcel as pe
 from pyexcel_ods import get_data, save_data
 from pyexcel_io.exceptions import IntegerAccuracyLossError
-
-import pytest
 
 IN_TRAVIS = "TRAVIS" in os.environ
 
@@ -20,10 +19,10 @@ def test_bug_fix_for_issue_1():
 def test_bug_fix_for_issue_2():
     data = {}
     data.update({"Sheet 1": [[1, 2, 3], [4, 5, 6]]})
-    data.update({"Sheet 2": [[u"row 1", u"Héllô!", u"HolÁ!"]]})
+    data.update({"Sheet 2": [["row 1", "Héllô!", "HolÁ!"]]})
     save_data("your_file.ods", data)
     new_data = get_data("your_file.ods")
-    assert new_data["Sheet 2"] == [[u"row 1", u"H\xe9ll\xf4!", u"Hol\xc1!"]]
+    assert new_data["Sheet 2"] == [["row 1", "H\xe9ll\xf4!", "Hol\xc1!"]]
 
 
 def test_invalid_date():
@@ -32,7 +31,6 @@ def test_invalid_date():
 
         value = "2015-08-"
         date_value(value)
-
 
     with pytest.raises(Exception):
         from pyexcel_ods.ods import date_value
@@ -67,7 +65,7 @@ def test_issue_14():
     # pyexcel issue 61
     test_file = "issue_61.ods"
     data = get_data(get_fixtures(test_file), skip_empty_rows=True)
-    assert data["S-LMC"] == [[u"aaa"], [0]]
+    assert data["S-LMC"] == [["aaa"], [0]]
 
 
 def test_issue_6():
@@ -114,7 +112,9 @@ def test_issue_83_ods_file_handle():
 def test_pr_22():
     test_file = get_fixtures("white_space.ods")
     data = get_data(test_file)
-    assert data["Sheet1"][0][0] == "paragraph with tab(\t),    space, \nnew line"
+    assert (
+        data["Sheet1"][0][0] == "paragraph with tab(\t),    space, \nnew line"
+    )
 
 
 def test_issue_23():
