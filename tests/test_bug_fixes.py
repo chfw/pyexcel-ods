@@ -3,57 +3,53 @@
 import os
 
 import psutil
+import pytest
 import pyexcel as pe
 from pyexcel_ods import get_data, save_data
 from pyexcel_io.exceptions import IntegerAccuracyLossError
-
-from nose import SkipTest
-from nose.tools import eq_, raises
 
 IN_TRAVIS = "TRAVIS" in os.environ
 
 
 def test_bug_fix_for_issue_1():
     data = get_data(get_fixtures("repeated.ods"))
-    eq_(data["Sheet1"], [["repeated", "repeated", "repeated", "repeated"]])
+    assert data["Sheet1"] == [["repeated", "repeated", "repeated", "repeated"]]
 
 
 def test_bug_fix_for_issue_2():
     data = {}
     data.update({"Sheet 1": [[1, 2, 3], [4, 5, 6]]})
-    data.update({"Sheet 2": [[u"row 1", u"Héllô!", u"HolÁ!"]]})
+    data.update({"Sheet 2": [["row 1", "Héllô!", "HolÁ!"]]})
     save_data("your_file.ods", data)
     new_data = get_data("your_file.ods")
-    assert new_data["Sheet 2"] == [[u"row 1", u"H\xe9ll\xf4!", u"Hol\xc1!"]]
+    assert new_data["Sheet 2"] == [["row 1", "H\xe9ll\xf4!", "Hol\xc1!"]]
 
 
-@raises(Exception)
 def test_invalid_date():
-    from pyexcel_ods.ods import date_value
+    with pytest.raises(Exception):
+        from pyexcel_ods.ods import date_value
 
-    value = "2015-08-"
-    date_value(value)
+        value = "2015-08-"
+        date_value(value)
+
+    with pytest.raises(Exception):
+        from pyexcel_ods.ods import date_value
+
+        date_value("1234567890")
 
 
-@raises(Exception)
-def test_fake_date_time_10():
-    from pyexcel_ods.ods import date_value
-
-    date_value("1234567890")
-
-
-@raises(Exception)
 def test_fake_date_time_19():
-    from pyexcel_ods.ods import date_value
+    with pytest.raises(Exception):
+        from pyexcel_ods.ods import date_value
 
-    date_value("1234567890123456789")
+        date_value("1234567890123456789")
 
 
-@raises(Exception)
 def test_fake_date_time_20():
-    from pyexcel_ods.ods import date_value
+    with pytest.raises(Exception):
+        from pyexcel_ods.ods import date_value
 
-    date_value("12345678901234567890")
+        date_value("12345678901234567890")
 
 
 def test_issue_13():
@@ -61,7 +57,7 @@ def test_issue_13():
     data = [[1, 2], [], [], [], [3, 4]]
     save_data(test_file, {test_file: data})
     written_data = get_data(test_file, skip_empty_rows=False)
-    eq_(data, written_data[test_file])
+    assert data == written_data[test_file]
     os.unlink(test_file)
 
 
@@ -69,19 +65,19 @@ def test_issue_14():
     # pyexcel issue 61
     test_file = "issue_61.ods"
     data = get_data(get_fixtures(test_file), skip_empty_rows=True)
-    eq_(data["S-LMC"], [[u"aaa"], [0]])
+    assert data["S-LMC"] == [["aaa"], [0]]
 
 
 def test_issue_6():
     test_file = "12_day_as_time.ods"
     data = get_data(get_fixtures(test_file), skip_empty_rows=True)
-    eq_(data["Sheet1"][0][0].days, 12)
+    assert data["Sheet1"][0][0].days == 12
 
 
 def test_issue_19():
     test_file = "pyexcel_81_ods_19.ods"
     data = get_data(get_fixtures(test_file), skip_empty_rows=True)
-    eq_(data["product.template"][1][1], "PRODUCT NAME  PMP")
+    assert data["product.template"][1][1] == "PRODUCT NAME  PMP"
 
 
 def test_issue_83_ods_file_handle():
@@ -110,18 +106,20 @@ def test_issue_83_ods_file_handle():
     pe.free_resources()
     open_files_l4 = proc.open_files()
     # this confirms that no more open file handle
-    eq_(open_files_l1, open_files_l4)
+    assert open_files_l1 == open_files_l4
 
 
 def test_pr_22():
     test_file = get_fixtures("white_space.ods")
     data = get_data(test_file)
-    eq_(data["Sheet1"][0][0], "paragraph with tab(\t),    space, \nnew line")
+    assert (
+        data["Sheet1"][0][0] == "paragraph with tab(\t),    space, \nnew line"
+    )
 
 
 def test_issue_23():
     if not IN_TRAVIS:
-        raise SkipTest()
+        pytest.skip("Need to be in Travis CI to run this test.")
     pe.get_book(
         url=(
             "https://github.com/pyexcel/pyexcel-ods/"
@@ -133,13 +131,13 @@ def test_issue_23():
 def test_issue_24():
     test_file = get_fixtures("comment-in-cell.ods")
     data = get_data(test_file)
-    eq_(data["Sheet1"], [["test"]])
+    assert data["Sheet1"] == [["test"]]
 
 
 def test_issue_27():
     test_file = get_fixtures("issue_27.ods")
     data = get_data(test_file, skip_empty_rows=True)
-    eq_(data["VGPMX"], [["", "Cost Basis", "0"]])
+    assert data["VGPMX"] == [["", "Cost Basis", "0"]]
 
 
 def test_issue_30():
@@ -148,16 +146,16 @@ def test_issue_30():
     sheet[0, 0] = 999999999999999
     sheet.save_as(test_file)
     sheet2 = pe.get_sheet(file_name=test_file)
-    eq_(sheet[0, 0], sheet2[0, 0])
+    assert sheet[0, 0] == sheet2[0, 0]
     os.unlink(test_file)
 
 
-@raises(IntegerAccuracyLossError)
 def test_issue_30_precision_loss():
-    test_file = "issue_30_2.ods"
-    sheet = pe.Sheet()
-    sheet[0, 0] = 9999999999999999
-    sheet.save_as(test_file)
+    with pytest.raises(IntegerAccuracyLossError):
+        test_file = "issue_30_2.ods"
+        sheet = pe.Sheet()
+        sheet[0, 0] = 9999999999999999
+        sheet.save_as(test_file)
 
 
 def get_fixtures(filename):

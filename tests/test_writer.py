@@ -10,7 +10,7 @@ class TestNativeODSWriter:
         self.content = {
             "Sheet1": [[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3]],
             "Sheet2": [[4, 4, 4, 4], [5, 5, 5, 5], [6, 6, 6, 6]],
-            "Sheet3": [[u"X", u"Y", u"Z"], [1, 4, 7], [2, 5, 8], [3, 6, 9]],
+            "Sheet3": [["X", "Y", "Z"], [1, 4, 7], [2, 5, 8], [3, 6, 9]],
         }
         self.testfile = "writer.ods"
         writer = Writer(self.testfile, "ods")
@@ -19,17 +19,17 @@ class TestNativeODSWriter:
         content = get_data(self.testfile, library="pyexcel-ods")
         assert content == self.content
 
-    def tearDown(self):
+    def teardown_method(self):
         if os.path.exists(self.testfile):
             os.unlink(self.testfile)
 
 
 class TestodsnCSVWriter(PyexcelWriterBase):
-    def setUp(self):
+    def setup_method(self):
         self.testfile = "test.ods"
         self.testfile2 = "test.csv"
 
-    def tearDown(self):
+    def teardown_method(self):
         if os.path.exists(self.testfile):
             os.unlink(self.testfile)
         if os.path.exists(self.testfile2):
@@ -37,9 +37,9 @@ class TestodsnCSVWriter(PyexcelWriterBase):
 
 
 class TestodsHatWriter(PyexcelHatWriterBase):
-    def setUp(self):
+    def setup_method(self):
         self.testfile = "test.ods"
 
-    def tearDown(self):
+    def teardown_method(self):
         if os.path.exists(self.testfile):
             os.unlink(self.testfile)
